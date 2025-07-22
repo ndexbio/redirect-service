@@ -1,0 +1,19 @@
+[Unit]
+Description=Redirect Service
+After=auditd.service systemd-user-sessions.service time-sync.target
+
+[Service]
+User=ndex
+TimeoutStartSec=0
+Type=simple
+KillMode=process
+WorkingDirectory=/tmp
+StandardOutput=null
+StandardError=null
+ExecStart=/bin/java -jar /opt/ndex/redirectservice/redirect-service.jar --mode runserver --conf /opt/ndex/redirectservice/server.conf
+Restart=always
+RestartSec=5
+LimitNOFILE=5555
+
+[Install]
+WantedBy=multi-user.target
