@@ -222,7 +222,7 @@ public class App {
                 if (isFirst) { isFirst = false; continue; } // Skip header
                 String[] parts = line.split(",", 2);
                 if (parts.length == 2) {
-                    map.put(parts[0].trim().toLowerCase(), parts[1].trim());
+                    map.put(parts[0].trim().toUpperCase(), parts[1].trim());
                 }
             }
         }
@@ -244,8 +244,23 @@ public class App {
                 return;
             }
 
-            String id = path.substring(1);
-            String redirectTo = redirectMap.get(id.toLowerCase());
+            String id = path.substring(1).toUpperCase();
+			if (id.equals("STATUS")){
+				resp.setContentType("text/plain");
+				resp.setStatus(HttpServletResponse.SC_OK);
+				resp.getWriter().println("OK");
+				return;
+			}
+			if (id.equals("LIST_OF_UNIPROT_IDS")){
+				resp.setContentType("text/plain");
+				resp.setStatus(HttpServletResponse.SC_OK);
+
+				for (String item : redirectMap.keySet()) {
+					resp.getWriter().println(item);
+				}
+				return;
+			}
+            String redirectTo = redirectMap.get(id);
             if (redirectTo != null) {
                 resp.setStatus(HttpServletResponse.SC_FOUND);
                 resp.setHeader("Location", redirectTo);
