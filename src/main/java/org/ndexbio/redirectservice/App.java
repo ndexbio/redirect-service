@@ -25,6 +25,7 @@ import ch.qos.logback.core.OutputStreamAppender;
 import jakarta.servlet.DispatcherType;
 import java.util.EnumSet;
 import java.util.Properties;
+import org.eclipse.jetty.ee10.servlet.ErrorHandler;
 import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import org.eclipse.jetty.util.RolloverFileOutputStream;
 
@@ -160,6 +161,18 @@ public class App {
 				FilterHolder reqFilterHolder = new FilterHolder(new RequestLoggingFilter());
 				context.addFilter(reqFilterHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
 				
+				// Set a custom ErrorHandler
+				context.setErrorHandler(new ErrorHandler() {
+					@Override
+					protected void handleErrorPage(HttpServletRequest request, Writer writer, int code, String message) throws IOException {
+						if (code == HttpServletResponse.SC_NOT_FOUND) {
+							writer.write("<html><body><h1>Not Found</h1><p>" + message + "</p></body></html>");
+						} else {
+							super.handleErrorPage(request, writer, code, message);
+						}
+					}
+				});
+				
 				server.setHandler(context);
 				server.start();
 				server.join();
@@ -232,7 +245,7 @@ public class App {
             }
 
             String id = path.substring(1);
-            String redirectTo = redirectMap.get(id);
+            String redirectTo = redirectMap.get(id.toLowerCase());
             if (redirectTo != null) {
                 resp.setStatus(HttpServletResponse.SC_FOUND);
                 resp.setHeader("Location", redirectTo);
