@@ -46,6 +46,11 @@
         </repository>
     </repositories>
   <dependencies>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-csv</artifactId>
+		<version>1.14.0</version>
+	</dependency>
     <!-- Jetty Core Server -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
