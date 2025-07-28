@@ -23,8 +23,12 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.core.OutputStreamAppender;
 import jakarta.servlet.DispatcherType;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Properties;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.eclipse.jetty.ee10.servlet.ErrorHandler;
 import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import org.eclipse.jetty.util.RolloverFileOutputStream;
@@ -150,13 +154,16 @@ public class App {
 
                 final int port = Integer.valueOf(props.getProperty(App.RUNSERVER_PORT, "8081"));
 
-				Map<String, String> redirectMap = loadRedirects(props.getProperty(App.REDIRECTS_FILE, "redirects.csv"));
+				Object[] redirectObjects = loadRedirects(props.getProperty(App.REDIRECTS_FILE, "redirects.csv"));
+				
+				ArrayList<String> crossReferences = (ArrayList<String>)redirectObjects[0];
+				Map<String, String> redirectMap = (Map<String, String>)redirectObjects[1];
 				
 				Server server = new Server(port);
 				ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
 				context.setContextPath("/");
 
-				context.addServlet(new ServletHolder(new RedirectServlet(redirectMap)), "/*");
+				context.addServlet(new ServletHolder(new RedirectServlet(redirectMap, crossReferences)), "/*");
 
 				FilterHolder reqFilterHolder = new FilterHolder(new RequestLoggingFilter());
 				context.addFilter(reqFilterHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
@@ -213,27 +220,34 @@ public class App {
         return props;
     }
 
-    private static Map<String, String> loadRedirects(String filename) throws IOException {
+    public static Object[] loadRedirects(String filename) throws IOException {
         Map<String, String> map = new HashMap<>();
+		ArrayList<String> uniProtTable = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            boolean isFirst = true;
-            while ((line = br.readLine()) != null) {
-                if (isFirst) { isFirst = false; continue; } // Skip header
-                String[] parts = line.split(",", 2);
-                if (parts.length == 2) {
-                    map.put(parts[0].trim().toUpperCase(), parts[1].trim());
-                }
+			
+			Iterable<CSVRecord> records = CSVFormat.RFC4180.builder()
+            .setHeader()
+			.setSkipHeaderRecord(true)
+			.get()
+			.parse(br);
+            for (CSVRecord record : records) {
+               map.put(record.get("ID").trim().toUpperCase(), record.get("URL").trim());
+			   uniProtTable.add(record.get("UNIPROT").trim().toUpperCase() + "\t" + record.get("ID").trim() + "\t" + record.get("OPTIONAL_1").trim());
+
             }
         }
-        return map;
+        return new Object[]{uniProtTable,map};
     }
 
     public static class RedirectServlet extends HttpServlet {
         private final Map<String, String> redirectMap;
+		private final List<String> uniprotMapping;
 
-        public RedirectServlet(Map<String, String> redirectMap) {
+        public RedirectServlet(Map<String, String> redirectMap, List<String> uniprotMapping) {
             this.redirectMap = redirectMap;
+			this.uniprotMapping = uniprotMapping;
+			Collections.sort(this.uniprotMapping);
+
         }
 
         @Override
@@ -251,11 +265,11 @@ public class App {
 				resp.getWriter().println("OK");
 				return;
 			}
-			if (id.equals("LIST_OF_UNIPROT_IDS")){
+			if (id.equals("UNIPROT_MAPPING_FILE")){
 				resp.setContentType("text/plain");
 				resp.setStatus(HttpServletResponse.SC_OK);
 
-				for (String item : redirectMap.keySet()) {
+				for (String item : uniprotMapping) {
 					resp.getWriter().println(item);
 				}
 				return;
@@ -285,8 +299,13 @@ public class App {
         sb.append("# Sets port Jetty web service will be run under\n");
         sb.append(App.RUNSERVER_PORT + " = 8081\n\n");
 
-        sb.append("# Path to redirects table with 1st column being ID and 2nd being URL.\n");
-		sb.append("#  NOTE: First row is assumed to be column header and is ignored.\n");
+        sb.append("# Path to redirects CSV file with following columns in this order:\n");
+        sb.append("# UNIPROT,ID,OPTIONAL_1,URL\n");
+		sb.append("# UNIPROT = Uniprot ID\n");
+		sb.append("# ID = NDEx ID\n");
+		sb.append("# OPTIONAL_1 = description of entry\n");
+		sb.append("# URL = URL to redirect to\n");
+		
         sb.append(App.REDIRECTS_FILE + " = redirects.csv\n\n");
 
         sb.append("# App log level. Valid log levels DEBUG INFO WARN ERROR ALL\n");
