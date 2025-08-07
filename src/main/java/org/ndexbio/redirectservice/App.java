@@ -51,7 +51,7 @@ public class App {
 	public static final String SUPPORTED_MODES = EXAMPLE_CONF_MODE + ", "
                                                     + RUNSERVER_MODE;
 
-    public static int main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
 		
 		final List<String> helpArgs = Arrays.asList("h", "help", "?");
@@ -73,7 +73,7 @@ public class App {
                 System.err.println("\nThere was an error parsing arguments: "
                         + oe.getMessage() + "\n\n");
                 parser.printHelpOn(System.err);
-                return 1;
+                System.exit(1);
             }
 
             //help check
@@ -81,7 +81,7 @@ public class App {
                 if (optionSet.has(helpArgName)) {
                     System.out.println(DESCRIPTION);
                     parser.printHelpOn(System.out);
-                    return 2;
+                    System.exit(2);
                 }
             }
 			
@@ -90,7 +90,7 @@ public class App {
             if (mode.equals(EXAMPLE_CONF_MODE)){
                 System.out.println(generateExampleConfiguration());
                 System.out.flush();
-                return 0;
+                return;
             }
 			
 			if (mode.equals(RUNSERVER_MODE)){
@@ -99,15 +99,15 @@ public class App {
 				Server server = factory.getServer(props);
 				server.start();
 				server.join();
-				return 0;
+				return;
 			}
 			System.err.println("Invalid --mode: " + mode + " mode must be one of the "
                     + "following: " + SUPPORTED_MODES);
-            return 3;
+            System.exit(3);
 		}
 		catch(Exception ex){
             ex.printStackTrace();
-			return 4;
+			System.exit(4);
         }
     }
 	
