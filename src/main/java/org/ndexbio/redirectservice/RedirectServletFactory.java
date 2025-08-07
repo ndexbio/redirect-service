@@ -21,7 +21,7 @@ public class RedirectServletFactory {
 		_redirectsFile = appConfiguration.getProperty(App.REDIRECTS_FILE, "redirects.csv");
 	}
 	
-	public RedirectServlet getRedirectServlet() throws IOException {
+	public RedirectServlet getRedirectServlet() throws Exception {
 		Object[] redirectObjects = loadRedirects(_redirectsFile);
 				
 		ArrayList<String> crossReferences = (ArrayList<String>)redirectObjects[0];
