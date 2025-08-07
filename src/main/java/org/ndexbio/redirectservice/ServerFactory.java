@@ -30,6 +30,15 @@ public class ServerFactory {
 	public ServerFactory(){
 	}
 	
+	/**
+	 * Gets Server object configured and ready to use.
+	 * 
+	 * NOTE: this method redirects standard out and standard error
+	 * to a logging file
+	 * @param props
+	 * @return
+	 * @throws Exception 
+	 */
 	public Server getServer(Properties props) throws Exception {
 		ch.qos.logback.classic.Logger rootLog =
                 (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
@@ -63,7 +72,7 @@ public class ServerFactory {
 		requestLog.addAppender(osa);
 		PrintStream logStream = new PrintStream(os);
 
-				//We are redirecting system out and system error to our print stream.
+		//We are redirecting system out and system error to our print stream.
 		System.setOut(logStream);
 		System.setErr(logStream);
 
