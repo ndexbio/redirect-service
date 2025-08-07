@@ -139,7 +139,7 @@ public class TestRedirectServlet {
 		expect(mockReq.getPathInfo()).andReturn("/notfound");
 		
 		HttpServletResponse mockResp = mock(HttpServletResponse.class);
-		mockResp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown ID: NOTFOUND");
+		mockResp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown ID: \"NOTFOUND\"");
 		replay(mockResp);
 		replay(mockReq);
 		
@@ -177,13 +177,13 @@ public class TestRedirectServlet {
 	}
 	
 	@Test
-	public void testRedirectServletWithTrailingSlashSuccess() throws IOException {
+	public void testRedirectServletWithTrailingSlash() throws IOException {
 		HttpServletRequest mockReq = mock(HttpServletRequest.class);
 		expect(mockReq.getPathInfo()).andReturn("/idone/");
 		
 		HttpServletResponse mockResp = mock(HttpServletResponse.class);
-		mockResp.setStatus(HttpServletResponse.SC_FOUND);
-		mockResp.setHeader("Location", "https://url.one");
+
+		mockResp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown ID: \"IDONE/\"");
 		replay(mockResp);
 		replay(mockReq);
 		

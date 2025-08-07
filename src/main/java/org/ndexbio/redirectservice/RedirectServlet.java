@@ -80,7 +80,7 @@ public class RedirectServlet extends HttpServlet {
 
 		// it is assumed the keys in redirectMap are in upper case so
 		// we are converting the value provided in request to upper case
-		String id = removeTrailingSlash(path.substring(1).toUpperCase());
+		String id = path.substring(1).toUpperCase();
 		if (id.equals("STATUS")){
 			resp.setContentType("text/plain");
 			resp.setStatus(HttpServletResponse.SC_OK);
@@ -103,22 +103,8 @@ public class RedirectServlet extends HttpServlet {
 			resp.setHeader("Location", redirectTo);
 		} else {
 			_logger.warn("Unknown ID: " + id);
-			resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown ID: " + id);
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown ID: \"" + id + "\"");
 		}
-	}
-	
-	/**
-	 * Tosses trailing forward slash at end if found. Does not
-	 * handle multiple trailing slashes since that would not 
-	 * happen from doGet call
-	 * @param str
-	 * @return String with trailing slash removed
-	 */
-	private String removeTrailingSlash(final String str) {
-		if (str.endsWith("/")) {
-			return str.substring(0, str.length() - 1);
-		}
-		return str;
 	}
 }
 
