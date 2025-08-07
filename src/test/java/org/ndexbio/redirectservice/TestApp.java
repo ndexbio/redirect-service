@@ -1,6 +1,5 @@
 package org.ndexbio.redirectservice;
 
-import ch.qos.logback.classic.Level;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -44,30 +43,4 @@ public class TestApp {
 		String[] args = {"--mode", App.EXAMPLE_CONF_MODE};
 		App.main(args);
 	}
-	/*
-	@Test
-	public void testMainHelp() throws Exception {
-		String[] args = {"--help"};
-		App.main(args);
-	}
-	
-	@Test
-	public void testMainInvalidArgument() throws Exception {
-		String[] args = {"--invalid"};
-		App.main(args);
-	}
-	
-	@Test
-	public void testMainInvalidMode() throws Exception {
-		String[] args = {"--mode", "invalid"};
-		App.main(args);
-	}
-	
-	@Test
-	public void testMainMissingConfiguration(@TempDir Path tempDir) throws Exception {
-		Path configFile = tempDir.resolve("test.configuration");
-		String[] args = {"--mode", App.RUNSERVER_MODE, "--conf", configFile.toAbsolutePath().toString()};
-		App.main(args);
-	}
-    */
 }
