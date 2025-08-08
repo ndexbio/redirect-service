@@ -13,12 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Filter that logs each request to a specific logger
+ * See RequestLoggingFilter#doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) 
+ * below for format of log
+ * 
  * @author churas
  */
 public class RequestLoggingFilter implements Filter {
 	public static final String X_FORWARDED_FOR = "X-FORWARDED-FOR";
 	public static final String USER_AGENT = "User-Agent";
+	
+	
 	public static final String REQUEST_LOGGER_NAME = "requestlog";
 	
 	private static final Logger _requestLogger = LoggerFactory.getLogger(REQUEST_LOGGER_NAME);
