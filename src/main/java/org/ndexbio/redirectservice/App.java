@@ -14,6 +14,12 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 
 
+/**
+ * Entry point for embedded Jetty service that redirects web requests
+ * to a URL specified in a table file set in the configuration
+ * 
+ * @author churas
+ */
 public class App {
 	
 	static Logger _logger = LoggerFactory.getLogger(App.class);
@@ -41,6 +47,10 @@ public class App {
      */
     public static final String RUNSERVER_PORT = "runserver.port";
 	
+	
+	/**
+	 * Denotes path to redirects.csv table file
+	 */
 	public static final String REDIRECTS_FILE = "redirects.file";
 
 	public static final String MODE = "mode";
@@ -51,6 +61,11 @@ public class App {
 	public static final String SUPPORTED_MODES = EXAMPLE_CONF_MODE + ", "
                                                     + RUNSERVER_MODE;
 
+	/**
+	 * Command line entry point. 
+	 * @param args
+	 * @throws Exception 
+	 */
     public static void main(String[] args) throws Exception {
 
 		
