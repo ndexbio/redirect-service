@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
  * @author churas
  */
 public class ServerFactory {
+	
+	public static String REQUEST_LOGGING_FILTER_PATTERN = "[%date]\t%msg%n";
 	public ServerFactory(){
 	}
 	
@@ -55,7 +57,7 @@ public class ServerFactory {
 
 		PatternLayoutEncoder logEncoder = new PatternLayoutEncoder();
 		logEncoder.setContext(lc);
-		logEncoder.setPattern("[%date]\t%msg%n");
+		logEncoder.setPattern(ServerFactory.REQUEST_LOGGING_FILTER_PATTERN);
 		logEncoder.start();
 
 		OutputStreamAppender osa = new OutputStreamAppender();
