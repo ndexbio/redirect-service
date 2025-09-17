@@ -19,10 +19,9 @@ Requirements
 =============
 
 * MacOS, Rocky Linux 8+, Ubuntu 20+, and most other Linux distributions should work
-* [Java][java] 11+ **(jdk to build)**
+* [Java][java] 17+ **(jdk to build)**
 * [Make][make] **(to build)**
 * [Maven][maven] 3.6 or higher **(to build)**
-* [Docker] **(to run algorithms)**
 
 Building Redirect Service
 =========================================
