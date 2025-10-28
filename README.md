@@ -44,5 +44,14 @@ is a command line application
 Running Redirect Service locally
 ==================================================
 
-TODO
+```Bash
+# In lieu of git one can just download repo and unzip it
+git clone https://github.com/ndexbio/redirect-service.git
 
+cd redirect-service
+mvn clean install
+mkdir -p /tmp/redirect/logs
+cp systemd/server.conf /tmp/redirect/.
+cp systemd/redirects.csv /tmp/redirect/.
+java -jar target/redirect-service*jar --conf /tmp/redirect/server.conf --mode runserver
+```
