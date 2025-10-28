@@ -54,4 +54,10 @@ mkdir -p /tmp/redirect/logs
 cp systemd/server.conf /tmp/redirect/.
 cp systemd/redirects.csv /tmp/redirect/.
 java -jar target/redirect-service*jar --conf /tmp/redirect/server.conf --mode runserver
+
+# Visit the following to see the mapping uniprot needs
+# http://localhost:8081/uniprot_mapping_file
+#
+# To test a redirect visit
+# http://localhost:8081/ndex
 ```
