@@ -22,7 +22,7 @@ import java.util.Properties;
  */
 public class App {
 	
-	static Logger _logger = LoggerFactory.getLogger(App.class);
+    static Logger _logger = LoggerFactory.getLogger(App.class);
 
     public static final String DESCRIPTION = "\nRedirect service\n\n"
             + "For usage information visit:  https://github.com/ndexbio/redirect-service\n\n";
@@ -48,17 +48,22 @@ public class App {
     public static final String RUNSERVER_PORT = "runserver.port";
 	
 	
-	/**
-	 * Denotes path to redirects.csv table file
-	 */
-	public static final String REDIRECTS_FILE = "redirects.file";
+    /**
+     * Denotes path to redirects.csv table file
+     */
+    public static final String REDIRECTS_FILE = "redirects.file";
+    
+    /**
+     * Pathway redirects table file
+     */
+    public static final String PATHWAY_REDIRECTS_FILE = "pathway.redirects.file";
 
-	public static final String MODE = "mode";
+    public static final String MODE = "mode";
     public static final String CONF = "conf";
     public static final String EXAMPLE_CONF_MODE = "exampleconf";
-	public static final String RUNSERVER_MODE = "runserver";
+    public static final String RUNSERVER_MODE = "runserver";
 	
-	public static final String SUPPORTED_MODES = EXAMPLE_CONF_MODE + ", "
+    public static final String SUPPORTED_MODES = EXAMPLE_CONF_MODE + ", "
                                                     + RUNSERVER_MODE;
 
 	/**
@@ -162,6 +167,12 @@ public class App {
 		sb.append("# URL = URL to redirect to\n");
 		
         sb.append(App.REDIRECTS_FILE + " = redirects.csv\n\n");
+        
+        sb.append("# Path to pathway redirects CSV file with the following columns in this order:\n");
+        sb.append("# ID,URL\n");
+        sb.append("# ID = NDEx ID\n");
+        sb.append("# URL = URL to redirect to\n");
+        sb.append(App.PATHWAY_REDIRECTS_FILE + " = pathway_redirects.csv\n\n");
 
         sb.append("# App log level. Valid log levels DEBUG INFO WARN ERROR ALL\n");
         sb.append(App.RUNSERVER_LOGLEVEL + " = INFO\n");

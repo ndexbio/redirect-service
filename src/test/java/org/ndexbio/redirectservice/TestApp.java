@@ -34,7 +34,7 @@ public class TestApp {
 		String exampleConfig = App.generateExampleConfiguration();
 		assertNotNull(exampleConfig);
 		String[] rows = exampleConfig.split("\n");
-		assertEquals(20, rows.length);
+		assertEquals(26, rows.length);
 	}
 	
 	

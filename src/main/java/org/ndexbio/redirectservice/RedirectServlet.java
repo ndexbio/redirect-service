@@ -22,7 +22,12 @@ public class RedirectServlet extends HttpServlet {
 
 	private final Map<String, String> redirectMap;
 	private final List<String> uniprotMapping;
+        private final Map<String, String> pathwayRedirectMap;
 
+        public RedirectServlet(Map<String, String> redirectMap, List<String> uniprotMapping){
+            this(redirectMap, uniprotMapping, null);
+        }
+        
 	/**
 	 * Constructor
 	 * 
@@ -30,13 +35,18 @@ public class RedirectServlet extends HttpServlet {
 	 *                    requests to. NOTE: the key values need to be in upper case
 	 * @param uniprotMapping List of strings representing a table of uniprot ids to
 	 *                       IDs in the redirectMap
+         * @param pathwayRedirectMap Map where key is ID and value is URL to redirect requests
+         *                           under /pathway to. NOTE: the key values need ot be in upper case
 	 * @throws NullPointerException 
 	 */
-	public RedirectServlet(Map<String, String> redirectMap, List<String> uniprotMapping) throws NullPointerException {
+	public RedirectServlet(Map<String, String> redirectMap, List<String> uniprotMapping,
+                Map<String, String> pathwayRedirectMap) throws NullPointerException {
 		this.redirectMap = redirectMap;
 		if (this.redirectMap == null){
 			throw new NullPointerException("Redirect map is null");
 		}
+                this.pathwayRedirectMap = pathwayRedirectMap;
+                
 		
 		this.uniprotMapping = uniprotMapping;
 		if (this.uniprotMapping == null){
@@ -48,9 +58,14 @@ public class RedirectServlet extends HttpServlet {
 
 	/**
 	 * Handles the request. Grabs the last part of the path
-	 * and assumes it is an ID or one of the two special strings 
-	 * (STATUS, UNIPROT_MAPPING_FILE) where case is ignored 
+	 * and assumes it is an ID or one of the three special strings 
+	 * (PATHWAY, STATUS, UNIPROT_MAPPING_FILE) where case is ignored 
 	 *
+         * If PATHWAY, this method assumes next part of path is an ID and 
+         * does case insensitive check of mapping in pathwayRedirectMap setting
+         * the value as Location header value along with HTTP_SC_FOUND to tell 
+         * caller to redirect.
+         * 
 	 * If STATUS, this method returns HTTP OK along with text OK in
 	 * text/plain content type
 	 * 
@@ -96,15 +111,33 @@ public class RedirectServlet extends HttpServlet {
 			}
 			return;
 		}
+                _logger.info("ID is: " + id);
+                
+                if (id.startsWith("PATHWAY/") || id.startsWith("PATHWAYS/")){
+                    // This assumes the next value after the slash is a pathway
+                    // id
+                    _logger.info("I am in here");
+                    String pathway_id = id.substring(id.indexOf("/")+1);
+                    _logger.info("pathway id: " + pathway_id);
+                    _logger.info("keys " + pathwayRedirectMap.keySet());
+                    processRedirect(resp, pathway_id, pathwayRedirectMap);
+                    return;
+                }
+                
 		// It is assumed the keys in redirectMap are in upper case
-		String redirectTo = redirectMap.get(id);
-		if (redirectTo != null) {
-			resp.setStatus(HttpServletResponse.SC_FOUND);
-			resp.setHeader("Location", redirectTo);
-		} else {
-			_logger.warn("Unknown ID: " + id);
-			resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown ID: \"" + id + "\"");
-		}
+                processRedirect(resp, id, redirectMap);
 	}
+        
+        
+        public void processRedirect(HttpServletResponse resp, final String id, Map<String, String> theMap) throws IOException {
+            String redirectTo = theMap.get(id);
+                if (redirectTo != null) {
+                    resp.setStatus(HttpServletResponse.SC_FOUND);
+                    resp.setHeader("Location", redirectTo);
+            } else {
+                _logger.warn("Unknown ID: " + id);
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown ID: \"" + id + "\"");
+        }
+    }
 }
 

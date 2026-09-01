@@ -175,6 +175,84 @@ public class TestRedirectServlet {
 		verify(mockResp);
 		verify(mockReq);
 	}
+        
+        @Test
+	public void testRedirectServletWithPathwaySuccess() throws IOException {
+		HttpServletRequest mockReq = mock(HttpServletRequest.class);
+		expect(mockReq.getPathInfo()).andReturn("/pathway/p_one");
+		
+		HttpServletResponse mockResp = mock(HttpServletResponse.class);
+		mockResp.setStatus(HttpServletResponse.SC_FOUND);
+		mockResp.setHeader("Location", "https://url.pone");
+		replay(mockResp);
+		replay(mockReq);
+		
+		ArrayList<String> uniprotMapping = new ArrayList<>();
+		uniprotMapping.add("some,line");
+		HashMap<String, String> redirectMap = new HashMap<>();
+		redirectMap.put("IDONE", "https://url.one");
+                
+                HashMap<String, String> pathwayRedirectMap = new HashMap<>();
+                pathwayRedirectMap.put("P_ONE", "https://url.pone");
+		RedirectServlet rs = new RedirectServlet(redirectMap,
+				uniprotMapping, pathwayRedirectMap);
+
+		rs.doGet(mockReq, mockResp);
+		verify(mockResp);
+		verify(mockReq);
+	}
+        
+        @Test
+	public void testRedirectServletWithPathwaysSuccess() throws IOException {
+		HttpServletRequest mockReq = mock(HttpServletRequest.class);
+		expect(mockReq.getPathInfo()).andReturn("/pathways/p_one");
+		
+		HttpServletResponse mockResp = mock(HttpServletResponse.class);
+		mockResp.setStatus(HttpServletResponse.SC_FOUND);
+		mockResp.setHeader("Location", "https://url.pone");
+		replay(mockResp);
+		replay(mockReq);
+		
+		ArrayList<String> uniprotMapping = new ArrayList<>();
+		uniprotMapping.add("some,line");
+		HashMap<String, String> redirectMap = new HashMap<>();
+		redirectMap.put("IDONE", "https://url.one");
+                
+                HashMap<String, String> pathwayRedirectMap = new HashMap<>();
+                pathwayRedirectMap.put("P_ONE", "https://url.pone");
+		RedirectServlet rs = new RedirectServlet(redirectMap,
+				uniprotMapping, pathwayRedirectMap);
+
+		rs.doGet(mockReq, mockResp);
+		verify(mockResp);
+		verify(mockReq);
+	}
+        
+        @Test
+	public void testRedirectServletWithPathwayButHittingRegularSuccess() throws IOException {
+		HttpServletRequest mockReq = mock(HttpServletRequest.class);
+		expect(mockReq.getPathInfo()).andReturn("/idOne");
+		
+		HttpServletResponse mockResp = mock(HttpServletResponse.class);
+		mockResp.setStatus(HttpServletResponse.SC_FOUND);
+		mockResp.setHeader("Location", "https://url.one");
+		replay(mockResp);
+		replay(mockReq);
+		
+		ArrayList<String> uniprotMapping = new ArrayList<>();
+		uniprotMapping.add("some,line");
+		HashMap<String, String> redirectMap = new HashMap<>();
+		redirectMap.put("IDONE", "https://url.one");
+                
+                HashMap<String, String> pathwayRedirectMap = new HashMap<>();
+                pathwayRedirectMap.put("P_ONE", "https://url.pone");
+		RedirectServlet rs = new RedirectServlet(redirectMap,
+				uniprotMapping, pathwayRedirectMap);
+
+		rs.doGet(mockReq, mockResp);
+		verify(mockResp);
+		verify(mockReq);
+	}
 	
 	@Test
 	public void testRedirectServletWithTrailingSlash() throws IOException {
