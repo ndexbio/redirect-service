@@ -104,3 +104,36 @@ Service Endpoints
 * `/status` returns `OK`
 * `/UNIPROT_MAPPING_FILE` returns the UniProt-to-ID mapping generated from
   `redirects.file`
+
+Release Process
+==================================================
+
+Releases are created by pushing a version tag that starts with `v`.
+
+Before tagging a release, update `pom.xml` so the project version matches the
+release version and does not include `-SNAPSHOT`.
+
+```Bash
+mvn test
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+Pushing the tag triggers the GitHub Actions release workflow. The workflow
+fails if the tag version does not match the `pom.xml` project version. For
+example, tag `v1.1.0` must match `pom.xml` version `1.1.0`.
+
+If the version check passes, the workflow builds the project with:
+
+```Bash
+mvn -B clean package
+```
+
+It then creates a GitHub Release for the tag and uploads the runnable jar:
+
+```text
+target/redirect-service-<VERSION>-jar-with-dependencies.jar
+```
+
+Release tags matching `v*` should be protected with a GitHub tag ruleset so
+only authorized maintainers can create, update, or delete release tags.
