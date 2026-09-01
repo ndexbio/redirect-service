@@ -229,6 +229,50 @@ public class TestRedirectServlet {
 	}
         
         @Test
+	public void testRedirectServletWithPathwayAndNullPathwayMap() throws IOException {
+		HttpServletRequest mockReq = mock(HttpServletRequest.class);
+		expect(mockReq.getPathInfo()).andReturn("/pathway/p_one");
+		
+		HttpServletResponse mockResp = mock(HttpServletResponse.class);
+		mockResp.sendError(HttpServletResponse.SC_NOT_FOUND, "Pathway redirect map is null.");
+		replay(mockResp);
+		replay(mockReq);
+		
+		ArrayList<String> uniprotMapping = new ArrayList<>();
+		uniprotMapping.add("some,line");
+		HashMap<String, String> redirectMap = new HashMap<>();
+		redirectMap.put("IDONE", "https://url.one");
+		RedirectServlet rs = new RedirectServlet(redirectMap,
+				uniprotMapping);
+
+		rs.doGet(mockReq, mockResp);
+		verify(mockResp);
+		verify(mockReq);
+	}
+        
+        @Test
+	public void testRedirectServletWithPathwaysAndNullPathwayMap() throws IOException {
+		HttpServletRequest mockReq = mock(HttpServletRequest.class);
+		expect(mockReq.getPathInfo()).andReturn("/pathways/p_one");
+		
+		HttpServletResponse mockResp = mock(HttpServletResponse.class);
+		mockResp.sendError(HttpServletResponse.SC_NOT_FOUND, "Pathway redirect map is null.");
+		replay(mockResp);
+		replay(mockReq);
+		
+		ArrayList<String> uniprotMapping = new ArrayList<>();
+		uniprotMapping.add("some,line");
+		HashMap<String, String> redirectMap = new HashMap<>();
+		redirectMap.put("IDONE", "https://url.one");
+		RedirectServlet rs = new RedirectServlet(redirectMap,
+				uniprotMapping);
+
+		rs.doGet(mockReq, mockResp);
+		verify(mockResp);
+		verify(mockReq);
+	}
+        
+        @Test
 	public void testRedirectServletWithPathwayButHittingRegularSuccess() throws IOException {
 		HttpServletRequest mockReq = mock(HttpServletRequest.class);
 		expect(mockReq.getPathInfo()).andReturn("/idOne");
